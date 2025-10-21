@@ -1,0 +1,52 @@
+<svg width="400" height="110" viewBox="0 0 360 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="vaultGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3A3A3A"/>
+      <stop offset="100%" stop-color="#2E2E2E"/>
+    </linearGradient>
+    <linearGradient id="dialGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Vault Body -->
+  <rect x="0" y="10" width="90" height="90" rx="18" ry="18" fill="url(#vaultGrad)" stroke="#1A1A1A" stroke-width="3"/>
+
+  <!-- Vault Dial -->
+  <circle cx="45" cy="55" r="18" fill="url(#dialGrad)" stroke="#FFFFFF" stroke-width="2"/>
+
+  <!-- Dial Tick Marks -->
+  <g stroke="#FFFFFF" stroke-width="0.8">
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(-72,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-64,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-56,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-48,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(-40,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-32,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-24,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(-16,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(-8,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(0,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(8,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(16,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(24,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(32,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(40,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(48,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(56,45,55)"/>
+    <line x1="45" y1="32" x2="45" y2="34" transform="rotate(64,45,55)"/>
+    <line x1="45" y1="30" x2="45" y2="34" transform="rotate(72,45,55)"/>
+  </g>
+
+  <!-- Dial Indicator -->
+  <line x1="45" y1="55" x2="60" y2="55" stroke="#FFFFFF" stroke-width="2"/>
+
+  <!-- PassVault Text -->
+  <text x="105" y="73" font-family="Arial, sans-serif" font-size="48" fill="url(#textGrad)" font-weight="bold">PassVault</text>
+</svg>
