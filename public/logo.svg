@@ -48,5 +48,6 @@
   <line x1="45" y1="55" x2="60" y2="55" stroke="#FFFFFF" stroke-width="2"/>
 
   <!-- PassVault Text -->
-  <text x="105" y="73" font-family="Arial, sans-serif" font-size="48" fill="url(#textGrad)" font-weight="bold">PassVault</text>
+  <text x="105" y="73" font-family="Arial, sans-serif" font-size="48" fill="url(#textGrad)" font-weight="bold">Pass</text>
+  <text x="220" y="73" font-family="Arial, sans-serif" font-size="48" fill="#CFF1E0" font-weight="bold">Vault</text>
 </svg>
