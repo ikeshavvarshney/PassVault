@@ -3,9 +3,11 @@ const app = express()
 const port = 3000
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 require('dotenv').config()
 
 app.use(bodyParser.json());
+app.use(cors());
 const url = process.env.MONGO_URI;
 const client = new MongoClient(url);
 const dbName = 'PassVault';
@@ -41,7 +43,7 @@ app.get('/get', (req, res) => {
 });
 
 //Save a new password
-app.post('/save', (req, res) => {
+app.post('/post', (req, res) => {
   const newVault = req.body; // frontend object structure: { "url": { "username": "password" } }
 
   const db = client.db(dbName);

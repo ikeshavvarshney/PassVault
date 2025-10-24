@@ -10,13 +10,17 @@ function App() {
   const [form, setform] = useState({ url: '', username: '', password: '' })
   const [passwords, setPasswords] = useState({})
 
-  useEffect(() => {
-    let pass = localStorage.getItem('passwords')
-    if (pass) {
-      setPasswords(JSON.parse(pass))
+  const getPasswords = async () => {
+    let req = await fetch('http://localhost:3000/get')
+    let data = await req.json()
+    if (data.success) {
+      setPasswords(data.vault)
     }
+  }
+  useEffect(() => {
+    getPasswords()
   }, [])
-  const savePassword = () => {
+  const savePassword = async () => {
     const newPasswords = {
       ...passwords,
       [form.url]: {
@@ -25,23 +29,44 @@ function App() {
       },
     };
     setPasswords(newPasswords)
-    localStorage.setItem('passwords', JSON.stringify(newPasswords))
-    toast.success(`Password saved successfully!`, {
-      position: "top-right",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "colored",
-      transition: Bounce,
-      style: {
-        background: "#10B981",
-        color: "#fff",
-        fontWeight: "500",
-        borderRadius: "10px",
+    let req = await fetch('http://localhost:3000/post', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify(newPasswords),
     });
+    let res = await req.json();
+    if (res.success === true) {
+      toast.success(`Password saved successfully!`, {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+        transition: Bounce,
+        style: {
+          background: "#10B981",
+          color: "#fff",
+          fontWeight: "500",
+          borderRadius: "10px",
+        },
+      })
+    } else {
+      toast.error(`Error saving password!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+    };
     setform({ url: '', username: '', password: '' })
   }
   const handleChange = (e) => {
@@ -70,28 +95,52 @@ function App() {
   const editPassword = (url, username) => {
     setform({ url: url, username: username, password: passwords[url][username] })
   }
-  const deletePassword = (url, username) => {
+  const deletePassword = async (url, username) => {
     if (confirm('Are you sure you want to delete this password?')) {
-      const newPasswords = { ...passwords }
-      delete newPasswords[url][username]
-      setPasswords(newPasswords)
-      localStorage.setItem('passwords', JSON.stringify(newPasswords))
-      toast.success(`Password deleted!`, {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
-        transition: Bounce,
-        style: {
-          background: "#EF4444",
-          color: "#fff",
-          fontWeight: "500",
-          borderRadius: "10px",
+      let req = await fetch('http://localhost:3000/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ url: url, username: username }),
       });
+      let res = await req.json();
+      if (res.success === true) {
+        toast.success(`Password deleted!`, {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+          style: {
+            background: "#EF4444",
+            color: "#fff",
+            fontWeight: "500",
+            borderRadius: "10px",
+          }
+        });
+        const updatedPasswords = { ...passwords };
+        delete updatedPasswords[url][username];
+        if (Object.keys(updatedPasswords[url]).length === 0) {
+          delete updatedPasswords[url];
+        }
+        setPasswords(updatedPasswords);
+      } else {
+        toast.error(`Error saving password!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      };
     }
   }
 
