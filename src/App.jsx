@@ -24,10 +24,10 @@ function App() {
         [form.username]: form.password,
       },
     };
-    console.log(newPasswords)
     setPasswords(newPasswords)
     localStorage.setItem('passwords', JSON.stringify(newPasswords))
     alert('Password saved!')
+    setform({ url: '', username: '', password: '' })
   }
   const handleChange = (e) => {
     setform({ ...form, [e.target.name]: e.target.value })
@@ -52,13 +52,13 @@ function App() {
       },
     });
   }
-  const editPassword = (url) => {
-    setform(passwords[url])
+  const editPassword = (url, username) => {
+    setform({url : url, username : username , password : passwords[url][username]})
   }
-  const deletePassword = (url) => {
+  const deletePassword = (url, username) => {
     if (confirm('Are you sure you want to delete this password?')) {
       const newPasswords = { ...passwords }
-      delete newPasswords[url]
+      delete newPasswords[url][username]
       setPasswords(newPasswords)
       localStorage.setItem('passwords', JSON.stringify(newPasswords))
       toast.success(`Password deleted!`, {
@@ -173,7 +173,7 @@ function App() {
               <div key={url} className="w-[50vw] bg-green-100 border border-green-300 rounded-2xl p-3 shadow-sm hover:shadow-lg hover:border-green-500 transition-all duration-300">
                 <div className="flex justify-between items-center">
                   <h3 className="flex items-center text-lg font-bold text-green-800 w-[45vw] relative">
-                    <span className="font-semibold text-gray-800 w-1/2">Website: {url}</span>
+                    <span className="font-semibold text-gray-800 w-5/12">Website: {url}</span>
                     <button onClick={() => copy('URL', url)} className='inline-flex justify-center items-center'>
                       <lord-icon
                         src="https://cdn.lordicon.com/iykgtsbt.json"
@@ -182,29 +182,11 @@ function App() {
                       </lord-icon>
                     </button>
                   </h3>
-
-                  <div className="flex gap-1">
-                    <button onClick={() => editPassword(url)} className='inline-flex justify-center items-center'>
-                      <lord-icon
-                        src="https://cdn.lordicon.com/gwlusjdu.json"
-                        trigger="hover"
-                        style={{ width: "18px", height: "18px" }}>
-                      </lord-icon>
-                    </button>
-                    <button onClick={() => deletePassword(url)} className='inline-flex justify-center items-center'>
-                      <lord-icon
-                        src="https://cdn.lordicon.com/oqeixref.json"
-                        trigger="hover"
-                        style={{ width: "18px", height: "18px" }}>
-                      </lord-icon>
-                    </button>
-                  </div>
-
                 </div>
 
                 {Object.keys(passwords[url]).map((username) => (
                   <div className="flex justify-between" key={username}>
-                    <p className="text-md text-gray-700 flex justify-between items-center w-1/2">
+                    <p className="text-md text-gray-700 flex justify-between items-center w-5/12">
                       <span className="font-medium text-green-900">Username: {username}</span>
                       <button onClick={() => copy('Username', username)} className='inline-flex justify-center items-center'>
                         <lord-icon
@@ -214,13 +196,31 @@ function App() {
                         </lord-icon>
                       </button>
                     </p>
-                    <div className=" w-5/12 flex justify-between items-center">
+
+                    <div className=" w-5/14 flex justify-between items-center">
                       <p className="text-md text-gray-700">Password:{" "}
                         <span className="font-mono text-green-900 bg-green-200 rounded px-2 py-[2px]">{showAllPassword ? passwords[url][username] : "********"}</span>
                       </p>
-                      <button onClick={() => copy('Password', passwords[url][username] )} className='inline-flex justify-center items-center'>
+                      <button onClick={() => copy('Password', passwords[url][username])} className='inline-flex justify-center items-center'>
                         <lord-icon
                           src="https://cdn.lordicon.com/iykgtsbt.json"
+                          trigger="hover"
+                          style={{ width: "18px", height: "18px" }}>
+                        </lord-icon>
+                      </button>
+                    </div>
+
+                    <div className="flex gap-1">
+                      <button onClick={() => editPassword(url, username)} className='inline-flex justify-center items-center'>
+                        <lord-icon
+                          src="https://cdn.lordicon.com/gwlusjdu.json"
+                          trigger="hover"
+                          style={{ width: "18px", height: "18px" }}>
+                        </lord-icon>
+                      </button>
+                      <button onClick={() => deletePassword(url, username)} className='inline-flex justify-center items-center'>
+                        <lord-icon
+                          src="https://cdn.lordicon.com/oqeixref.json"
                           trigger="hover"
                           style={{ width: "18px", height: "18px" }}>
                         </lord-icon>
