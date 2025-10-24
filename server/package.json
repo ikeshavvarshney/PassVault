@@ -1,0 +1,26 @@
+{
+  "name": "passvault",
+  "version": "1.0.0",
+  "description": "password manager",
+  "homepage": "https://github.com/ikeshavvarshney/PassVault#readme",
+  "bugs": {
+    "url": "https://github.com/ikeshavvarshney/PassVault/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikeshavvarshney/PassVault.git"
+  },
+  "license": "MIT",
+  "author": "Keshav Varshney",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0"
+  }
+}
