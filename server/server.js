@@ -11,21 +11,21 @@ const client = new MongoClient(url);
 const dbName = 'PassVault';
 
 app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`)
+  console.log(`Server listening at http://localhost:${port}`)
 });
 
 // Connect to MongoDB
 client.connect().then(() => {
-    console.log('Connected successfully to MongoDB server');
+  console.log('Connected successfully to MongoDB server');
 }).catch(err => {
-    console.error('MongoDB connection error:', err);
+  console.error('MongoDB connection error:', err);
 });
 
-const sanitizeKey = key => key.replace(/\./g, '___');
-const restoreKey = key => key.replace(/___/g, '.');
+const sanitizeKey = (key) => key.replace(/\./g, '___');
+const restoreKey = (key) => key.replace(/___/g, '.');
 
 // Get all passwords
-app.get('/vault', (req, res) => {
+app.get('/get', (req, res) => {
   const db = client.db(dbName);
   const collection = db.collection('passwords');
 
@@ -33,24 +33,22 @@ app.get('/vault', (req, res) => {
     .then(doc => {
       const vault = doc?.vault || {};
       const restoredVault = Object.fromEntries(
-        Object.entries(vault).map(([url, users]) => [ restoreKey(url), users ])
+        Object.entries(vault).map(([url, users]) => [restoreKey(url), users])
       );
       res.json({ success: true, vault: restoredVault });
     })
     .catch(err => res.status(500).json({ success: false, message: 'Error fetching vault' }));
 });
 
-
-
 //Save a new password
-app.post('/save-password', (req, res) => {
-  const newVault = req.body; // frontend object
+app.post('/save', (req, res) => {
+  const newVault = req.body; // frontend object structure: { "url": { "username": "password" } }
 
   const db = client.db(dbName);
   const collection = db.collection('passwords');
 
   const sanitizedVault = Object.fromEntries(
-    Object.entries(newVault).map(([url, users]) => [ `vault.${sanitizeKey(url)}`, users ])
+    Object.entries(newVault).map(([url, users]) => [`vault.${sanitizeKey(url)}`, users])
   );
 
   collection.updateOne({}, { $set: sanitizedVault }, { upsert: true })
@@ -58,37 +56,32 @@ app.post('/save-password', (req, res) => {
     .catch(err => res.status(500).json({ success: false, message: 'Error updating vault' }));
 });
 
-
 // Delete a password
-
-
-app.delete('/vault', (req, res) => {
-  const { url, username } = req.body;
-  if (!url || !username) return res.status(400).json({ success: false, message: 'url and username required' });
+app.delete('/delete', (req, res) => {
+  const { url, username } = req.body; // Frontend sends { url: "example.com", username: "user1" }
 
   const db = client.db(dbName);
   const collection = db.collection('passwords');
+  const sanitizedUrl = sanitizeKey(url);
 
   collection.findOne({})
     .then(doc => {
-      if (!doc || !doc.vault) return res.status(404).json({ success: false, message: 'Vault is empty' });
-
-      const sanitizedUrl = sanitizeKey(url);
-      if (!doc.vault[sanitizedUrl] || !doc.vault[sanitizedUrl][username]) {
-        return res.status(404).json({ success: false, message: 'No matching password found' });
+      if (!doc || !doc.vault || !doc.vault[sanitizedUrl] || !doc.vault[sanitizedUrl][username]) {
+        return res.status(404).json({ success: false, message: 'Username not found' });
       }
+      delete doc.vault[sanitizedUrl][username];
 
-      // Now safely delete
-      const path = `vault.${sanitizedUrl}.${username}`;
-      return collection.updateOne({}, { $unset: { [path]: "" } });
+      if (Object.keys(doc.vault[sanitizedUrl]).length === 0) {
+        delete doc.vault[sanitizedUrl];
+      }
+      return collection.updateOne({}, { $set: { vault: doc.vault } });
     })
     .then(result => {
-      if (result && result.modifiedCount > 0) {
-        res.status(200).json({ success: true, message: 'Deleted successfully', result });
-      }
+      if (!result) return;
+      res.status(200).json({ success: true, message: 'Deleted successfully' });
     })
     .catch(err => {
-      console.error(err);
+      console.error('Error deleting password:', err);
       res.status(500).json({ success: false, message: 'Error deleting password' });
     });
 });
